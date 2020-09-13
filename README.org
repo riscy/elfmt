@@ -1,0 +1,6 @@
+#+TITLE: elfmt
+#+OPTIONS: toc:3 author:t creator:nil num:nil
+#+AUTHOR: Chris Rayner
+#+EMAIL: dchrisrayner@gmail.com
+
+Simple heuristic-based code formatter for Emacs Lisp.
