@@ -13,10 +13,10 @@
 ;; Simple code formatter for Emacs Lisp.  Features:
 ;;
 ;; - Won't format lines that end in ; nofmt
-;; - Won't format sexps it doesn't work with (`elfmt--nofmt-sexps')
+;; - Won't format sexps it doesn't work with (`elfmt-nofmt-sexps')
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
-;;   parens, or matches on `elfmt--no-widow-patterns'
+;;   parens, or matches on widows (see `elfmt-type-1-widows', etc.)
 ;; - Prefers "modern" elisp (old-style backquotes will cause it to halt)
 ;;
 ;; Usage:
@@ -30,6 +30,7 @@
 ;; - elisp-format <https://github.com/Yuki-Inoue/elisp-format>
 ;; - lispy <https://github.com/abo-abo/lispy>'s `lispy-alt-multiline'
 ;; - semantic-refactor <https://github.com/tuhdo/semantic-refactor>
+;; - M-x pp-buffer and extensions <https://www.emacswiki.org/emacs/pp+.el>
 ;; - <https://emacs.stackexchange.com/questions/283/command-that-formats-prettifies-elisp-code>
 
 ;;; Code:
@@ -45,7 +46,13 @@
   :link '(url-link :tag "URL" "https://github.com/riscy/elfmt")
   :link '(emacs-commentary-link :tag "Commentary" "shx.el"))
 
-(defconst elfmt--type-1-widows
+(defcustom elfmt-nofmt-sexps
+  '()
+  "List of sexps that `elfmt' won't apply formatting to."
+  :link '(function-link elfmt-sexp)
+  :type '(repeat string))
+
+(defconst elfmt-type-1-widows
   (regexp-opt
    '("(declare\n"
      "(dolist\n"
@@ -64,7 +71,7 @@
      "(with-current-buffer\n"))
   "To e.g. join '(while ...)' to its condition.")
 
-(defconst elfmt--type-2-widows
+(defconst elfmt-type-2-widows
   (format "%s [[:graph:]]+$"
           (regexp-opt
            '("(cl-defmethod"
@@ -80,13 +87,9 @@
              "(defun")))
   "To e.g. join '(defun <name> ...)' to its argument list.")
 
-(defconst elfmt--type-3-widows
+(defconst elfmt-type-3-widows
   (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("(declare-function\n")))
   "To e.g. join '(declare-function <name> <file> ...)' to its argument list.")
-
-(defconst elfmt--nofmt-sexps
-  '()
-  "List of sexps that `elfmt' won't apply formatting to.")
 
 ;;;###autoload
 (define-minor-mode elfmt-mode
@@ -141,7 +144,7 @@ Only formats lists whose whose car is in `elfmt-nofmt-sexps'."
     (when (and
            original-sexp
            (listp original-sexp)
-           (not (member (car original-sexp) elfmt--nofmt-sexps)))
+           (not (member (car original-sexp) elfmt-nofmt-sexps)))
       (goto-char (point-at-bol))
       (elfmt--map-sexp-lines #'elfmt--break-line)
       (elfmt--map-sexp-lines #'elfmt--join-line)
@@ -256,9 +259,9 @@ join widowed lines with the next line, and fix indentation."
    ((looking-at ";[^;]")
     (save-excursion (insert ";")))
    ((or
-     (looking-at elfmt--type-1-widows)
-     (looking-at elfmt--type-2-widows)
-     (looking-at elfmt--type-3-widows)
+     (looking-at elfmt-type-1-widows)
+     (looking-at elfmt-type-2-widows)
+     (looking-at elfmt-type-3-widows)
      (looking-at "[`']?(+$")
      (looking-at "[`']?(let\\*?$")
      (looking-at "[`']?(lambda$")
