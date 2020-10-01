@@ -3,4 +3,29 @@
 #+AUTHOR: Chris Rayner
 #+EMAIL: dchrisrayner@gmail.com
 
-Simple heuristic-based code formatter for Emacs Lisp.
+Simple code formatter for Emacs Lisp.
+
+*** Features
+
+- Won't format lines that end in =; nofmt=
+- Won't format sexps it doesn't work with (~elfmt-nofmt-sexps~)
+- Tries to break at ~fill-column~, but lines may exceed this number
+  due to inline comments, long literals, trailing sequences of closed
+  parens, or matches on widows (see ~elfmt-type-1-widows~, etc.)
+- Prefers "modern" elisp (old-style backquotes will cause it to halt)
+
+*** Usage
+
+- Type =M-x elfmt= to format the current buffer.
+- Type =M-x elfmt-sexp= to format the current sexp.
+- Type =M-x elfmt-mode= to automatically format the buffer on save.
+- Type =M-x elfmt-global-mode= to enable it everywhere
+
+*** Alternatives
+
+- [[https://gitlab.com/ideasman42/emacs-elisp-autofmt][elisp-autofmt]]
+- [[https://github.com/Yuki-Inoue/elisp-format][elisp-format]]
+- [[https://github.com/abo-abo/lispy][lispy]]'s ~lispy-alt-multiline~
+- [[https://github.com/tuhdo/semantic-refactor][semantic-refactor]]
+- =M-x pp-buffer= and [[https://www.emacswiki.org/emacs/pp+.el][extensions]]
+- ...and [[https://emacs.stackexchange.com/questions/283/command-that-formats-prettifies-elisp-code][a discussion on StackOverflow]]
