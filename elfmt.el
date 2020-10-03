@@ -55,6 +55,7 @@
      "(if\n"
      "#'(lambda\n"
      "(not\n"
+     "(pcase\n"
      "(unless\n"
      "(when-let*\n"
      "(when-let\n"
