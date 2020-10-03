@@ -12,26 +12,19 @@
 
 ;; Simple code formatter for Emacs Lisp.  Features:
 ;;
-;; - Won't format lines that end in ; nofmt
-;; - Won't format sexps it doesn't work with (`elfmt-nofmt-sexps')
+;; - Won't format lines that end in '; nofmt'
+;; - Won't format sexps in its exclusion list (see `elfmt-nofmt-sexps')
+;; - Focuses on the placement of lists and (mostly) ignores atoms
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
 ;;   parens, or matches on widows (see `elfmt-type-1-widows', etc.)
 ;; - Prefers "modern" elisp (old-style backquotes will cause it to halt)
 ;;
 ;; Usage:
-;; - Type M-x elfmt to format the current buffer.
+;; - Type M-x elfmt to format the current buffer
 ;; - Type M-x elfmt-sexp to format the current sexp.
-;; - Type M-x elfmt-mode to automatically format the buffer on save.
-;; - Type M-x elfmt-global-mode to enable it everywhere
-;;
-;; Alternatives:
-;; - elisp-autofmt <https://gitlab.com/ideasman42/emacs-elisp-autofmt>
-;; - elisp-format <https://github.com/Yuki-Inoue/elisp-format>
-;; - lispy <https://github.com/abo-abo/lispy>'s `lispy-alt-multiline'
-;; - semantic-refactor <https://github.com/tuhdo/semantic-refactor>
-;; - M-x pp-buffer and extensions <https://www.emacswiki.org/emacs/pp+.el>
-;; - <https://emacs.stackexchange.com/questions/283/command-that-formats-prettifies-elisp-code>
+;; - Type M-x elfmt-mode to automatically format the buffer on save
+;; - Type M-x elfmt-global-mode to enable it `elfmt-mode' everywhere
 
 ;;; Code:
 
@@ -235,7 +228,10 @@ comments, closing parentheses, and backslash abbreviations like
      (string-match "\n" sexp-str)  ; sexp crosses to the next line
      (setq sexp-str (format "%S" (car (read-from-string sexp-str))))
      (< (length sexp-str) (- fill-column (current-column))) ; mostly fits
-     (< (cl-count ?\( sexp-str) 5) ; nofmt
+     ;; NOTE: `join-line' on a line that ends with ?\( will delete whitespace,
+     ;; so this line is at risk of containing "?\(sexp-str". elfmt currently has
+     ;; no problem with this, but it could become a problem in the future:
+     (< (cl-count ?\( sexp-str) 5)
      (save-excursion
        (and
         (not (elfmt--trailing-syntax))     ; not inside a string/comment
