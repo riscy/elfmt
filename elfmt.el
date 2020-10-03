@@ -130,8 +130,8 @@
   (interactive)
   (let ((start-time (current-time)))
     (save-excursion
-      (while (ignore-errors (or (up-list) t)))
-      (backward-sexp)
+      (forward-char 1)
+      (while (ignore-errors (or (up-list) t))) (backward-sexp)
       (elfmt--sexp))
     (message "`elfmt-sexp' took %dms"
              (* 1000 (float-time (time-since start-time))))))
