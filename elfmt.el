@@ -63,7 +63,7 @@
      "(while\n"
      "(with-suppressed-warnings\n"
      "(with-current-buffer\n"))
-  "To e.g. join '(while ...)' to its condition.")
+  "To e.g. join '(while' to its condition.")
 
 (defconst elfmt-type-2-widows
   (format "%s [[:graph:]]+$"
@@ -79,11 +79,11 @@
              "(defadvice"
              "(defsubst"
              "(defun")))
-  "To e.g. join '(defun <name> ...)' to its argument list.")
+  "To e.g. join '(defun <name>' to its argument list.")
 
 (defconst elfmt-type-3-widows
   (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("(declare-function\n")))
-  "To e.g. join '(declare-function <name> <file> ...)' to its argument list.")
+  "To e.g. join '(declare-function <name> <file>' to its argument list.")
 
 ;;;###autoload
 (define-minor-mode elfmt-mode
@@ -132,7 +132,7 @@
 
 (defun elfmt--sexp ()
   "Format the sexp starting on the current line.
-Only formats lists whose whose car is in `elfmt-nofmt-sexps'."
+Only formats lists whose car is in `elfmt-nofmt-sexps'."
   ;; precond: point is on an sexp
   (let ((original-sexp (sexp-at-point)))
     (when (and
