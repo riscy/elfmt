@@ -125,7 +125,8 @@
   (let ((start-time (current-time)))
     (save-excursion
       (forward-char 1)
-      (while (ignore-errors (or (up-list) t))) (backward-sexp)
+      (while (ignore-errors (or (up-list) t)))
+      (backward-sexp)
       (elfmt--sexp))
     (message "`elfmt-sexp' took %dms"
              (* 1000 (float-time (time-since start-time))))))
@@ -271,10 +272,7 @@ join widowed lines with the next line, and fix indentation."
 (defun elfmt--postprocess-join (n)
   "Join the current line with the next, N times, if possible."
   (dotimes (_ (or n 1))
-    (or
-     (elfmt--nofmt-line-p +1)
-     (elfmt--trailing-syntax)
-     (join-line 1))))
+    (or (elfmt--nofmt-line-p +1) (elfmt--trailing-syntax) (join-line 1))))
 
 (defun elfmt--looking-at-orphan-parens ()
   "Return non-nil if there are orphan parens on the next line."
