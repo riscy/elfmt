@@ -133,8 +133,8 @@
              (* 1000 (float-time (time-since start-time))))))
 
 (defun elfmt--sexp ()
-  "Format the sexp starting on the current line.
-Only formats lists whose car is in `elfmt-nofmt-sexps'."
+  "Format the sexp starting at the point.
+NOTE: skips lists whose car is in `elfmt-nofmt-sexps'."
   ;; precond: point is on an sexp
   (let ((original-sexp (sexp-at-point)))
     (when (and
@@ -159,8 +159,7 @@ Only formats lists whose car is in `elfmt-nofmt-sexps'."
     (goto-char start-of-sexp)))
 
 (defun elfmt--nofmt-line-p (&optional n)
-  "Whether the line should not be formatted.
-If N is specified, move the point up or down that many lines."
+  "Non-nil if N lines forward (backward if N is negative) is 'nofmt'."
   (declare (side-effect-free t))
   (save-excursion
     (when n (forward-line n))
@@ -271,7 +270,7 @@ join widowed lines with the next line, and fix indentation."
   (funcall indent-line-function))
 
 (defun elfmt--postprocess-join (n)
-  "Join the current line with the next, N times, if possible."
+  "Join the current line with the next, as many as N times."
   (dotimes (_ (or n 1))
     (or (elfmt--nofmt-line-p +1) (elfmt--trailing-syntax) (join-line 1))))
 
