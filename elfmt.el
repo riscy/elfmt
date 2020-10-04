@@ -267,6 +267,8 @@ join widowed lines with the next line, and fix indentation."
      (looking-at ":[[:graph:]]+$")  ; symbols
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
+  (when (eq (char-before (point-at-eol)) ?\()
+    (elfmt--postprocess-join 1))
   (funcall indent-line-function))
 
 (defun elfmt--postprocess-join (n)
