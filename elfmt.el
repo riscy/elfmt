@@ -141,7 +141,7 @@ Only formats lists whose car is in `elfmt-nofmt-sexps'."
            (not (member (car original-sexp) elfmt-nofmt-sexps)))
       (goto-char (point-at-bol))
       (elfmt--map-sexp-lines #'elfmt--break-line)
-      (elfmt--map-sexp-lines #'elfmt--join-line)
+      (elfmt--map-sexp-lines #'elfmt--mend-line)
       (elfmt--map-sexp-lines #'elfmt--postprocess-line)
       (or
        (equal (sexp-at-point) original-sexp)
@@ -208,16 +208,16 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
    (replace-match ""))
   (goto-char (point-at-eol)))
 
-(defun elfmt--join-line ()
+(defun elfmt--mend-line ()
   "Join the current line up with the lines beneath it, when feasible."
   ;; precond: (eq (point) (point-at-bol))
   (funcall indent-line-function)
   (and  ; move to the innermost sexp
    (> (skip-chars-forward "(" (point-at-eol)) 0)
    (backward-char))
-  (while (elfmt--join-line-p) (save-excursion (join-line 1))))
+  (while (elfmt--mend-line-p) (save-excursion (join-line 1))))
 
-(defun elfmt--join-line-p ()
+(defun elfmt--mend-line-p ()
   "Whether to join the current line with the next.
 This uses heuristics that disregard the contributions of trailing
 comments, closing parentheses, and backslash abbreviations like
