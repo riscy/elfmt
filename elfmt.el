@@ -182,7 +182,8 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
           ;; when the point is inside a string!
           (re-search-backward "[^(](" (point-at-bol) t)
           (or (forward-char 1) t)
-          (skip-chars-backward "^[:space:]" (point-at-bol))
+          (skip-chars-backward "[:graph:]" (point-at-bol))
+          (not (eq (char-after) ?\"))
           (skip-chars-backward "[:space:]" (point-at-bol))
           (not (bolp)))
     (let ((state (syntax-ppss)))
