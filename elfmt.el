@@ -122,7 +122,8 @@
 (defun elfmt-sexp ()
   "Format the current (top level) sexp."
   (interactive)
-  (let ((start-time (current-time)))
+  (let ((start-time (current-time))
+        (gc-cons-threshold most-positive-fixnum)) ; speedup
     (save-excursion
       (forward-char 1)
       (while (ignore-errors (or (up-list) t)))
