@@ -53,7 +53,9 @@
      "(if-let*\n"
      "(if-let\n"
      "(if\n"
-     "#'(lambda\n"
+     "(lambda\n"
+     "(let*\n"
+     "(let\n"
      "(not\n"
      "(pcase\n"
      "(unless\n"
@@ -68,21 +70,20 @@
 (defconst elfmt-type-2-widows
   (format "%s [[:graph:]]+$"
           (regexp-opt
-           '("(cl-defmethod"
+           '("(cl-defgeneric"
              "(cl-defmacro"
-             "(cl-defgeneric"
+             "(cl-defmethod"
              "(cl-defsubst"
              "(cl-defun"
              "(defadvice"
              "(defclass"
              "(defmacro"
-             "(defadvice"
              "(defsubst"
              "(defun")))
   "To e.g. join '(defun <name>' to its argument list.")
 
 (defconst elfmt-type-3-widows
-  (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("(declare-function\n")))
+  (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("(declare-function")))
   "To e.g. join '(declare-function <name> <file>' to its argument list.")
 
 ;;;###autoload
@@ -258,12 +259,11 @@ join widowed lines with the next line, and fix indentation."
    ((looking-at ";[^;]")
     (save-excursion (insert ";")))
    ((or
+     ;; inverse of `backward-prefix-chars':
+     (ignore (skip-chars-forward "`#'@^ " (point-at-eol)))
      (looking-at elfmt-type-1-widows)
      (looking-at elfmt-type-2-widows)
      (looking-at elfmt-type-3-widows)
-     (looking-at "[`']?(+$")
-     (looking-at "[`']?(let\\*?$")
-     (looking-at "[`']?(lambda$")
      (looking-at ":[[:graph:]]+$")  ; symbols
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
