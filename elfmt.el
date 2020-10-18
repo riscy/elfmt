@@ -264,7 +264,7 @@ join widowed lines with the next line, and fix indentation."
      (looking-at elfmt-type-1-widows)
      (looking-at elfmt-type-2-widows)
      (looking-at elfmt-type-3-widows)
-     (looking-at ":[[:graph:]]+$")  ; symbols
+     (looking-at ":[[:graph:]]+[^\"]$") ; symbols, but not in strings
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
   (when (eq (char-before (point-at-eol)) ?\()

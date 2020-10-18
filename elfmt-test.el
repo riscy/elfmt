@@ -136,6 +136,9 @@ Or just a single column:
 ;; End:
 "))
 
+"An apparent symbol at the end of a string is left alone:
+:test"
+
 (defun elfmt--postprocess-line-join ; (unless there's a trailing comment)
     ()
   "As part of a postprocessing step, join current line with the next."
