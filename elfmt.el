@@ -57,6 +57,8 @@
      "(let*\n"
      "(let\n"
      "(not\n"
+     "(pcase-let*\n"
+     "(pcase-let\n"
      "(pcase\n"
      "(unless\n"
      "(when-let*\n"
