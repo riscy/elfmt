@@ -115,8 +115,8 @@
       (while (not (bobp))
         (backward-sexp)
         (elfmt--sexp)
-        (syntax-ppss-flush-cache (point))) ; in lieu of modification hooks
-      (while (re-search-forward "\n\\{3,\\}" nil t) (replace-match "\n\n")))
+        (syntax-ppss-flush-cache (point)))) ; in lieu of modification hooks
+    ;; TODO: fix whitespace between top-level sexps
     (when (bound-and-true-p doom-modeline-mode) ; in lieu of modification hooks
       (doom-modeline-update-buffer-file-name)
       (doom-modeline-update-buffer-file-state-icon))
