@@ -234,9 +234,6 @@ comments, closing parentheses, and backslash abbreviations like
      (string-match "\n" sexp-str)  ; sexp crosses to the next line
      (setq sexp-str (format "%S" (car (read-from-string sexp-str))))
      (< (length sexp-str) (- fill-column (current-column))) ; mostly fits
-     ;; NOTE: `join-line' on a line that ends with ?\( will delete whitespace,
-     ;; so this line is at risk of containing "?\(sexp-str". elfmt currently has
-     ;; no problem with this, but it could become a problem in the future:
      (< (cl-count ?\( sexp-str) 5)
      (save-excursion
        (and

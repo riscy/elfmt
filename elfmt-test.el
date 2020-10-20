@@ -62,9 +62,13 @@ last.  FORMS are the expressions to be threaded."
 	(forward-char -1)
       (forward-sexp -1))))
 
+;; this string shouldn't be touched:
 " \
 (defun thing-at-point--beginning-of-sexp ()
   (let ((char-syntax (char-syntax (char-before))))
+
+
+
     (if (or
        (eq char-syntax ?\()
          (and (eq char-syntax ?\") (nth 3 (syntax-ppss))))
@@ -139,11 +143,15 @@ Or just a single column:
 "An apparent symbol at the end of a string is left alone:
 :test"
 
+(defun testing-2342 ()
+  "Known spacing issue due to `fixup-whitespace'."
+  (if (eq ?\((char-after)) (message "Mashed")))
+
 (defun elfmt--postprocess-line-join ; (unless there's a trailing comment)
     ()
   "As part of a postprocessing step, join current line with the next."
   (when (not (or t nil)) (join-line 1)
     )) ; (or a 'nofmt' at the end of the line)  ; nofmt
 
-(provide 'test-elfmt)
-;;; test-elfmt.el ends here
+(provide 'elfmt-test)
+;;; elfmt-test.el ends here
