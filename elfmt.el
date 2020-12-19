@@ -17,14 +17,14 @@
 ;; - Focuses on the placement of lists and (mostly) ignores atoms
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
-;;   parens, or matches on widows (see `elfmt-type-1-widows', etc.)
+;;   parens, or matches on widows (see `elfmt-join-1-widows', etc.)
 ;; - Prefers "modern" elisp (old-style backquotes will cause it to halt)
 ;;
 ;; Usage:
-;; - Type M-x elfmt to format the current buffer
-;; - Type M-x elfmt-sexp to format the current sexp.
-;; - Type M-x elfmt-mode to automatically format the buffer on save
-;; - Type M-x elfmt-global-mode to enable it `elfmt-mode' everywhere
+;; - Use M-x elfmt to format the current buffer
+;; - Use M-x elfmt-sexp to format the current sexp.
+;; - Use M-x elfmt-mode to automatically format the buffer on save
+;; - Use M-x elfmt-global-mode to enable it `elfmt-mode' everywhere
 
 ;;; Code:
 
@@ -45,7 +45,7 @@
   :link '(function-link elfmt-sexp)
   :type '(repeat string))
 
-(defconst elfmt-type-1-widows
+(defconst elfmt-join-1-widows
   (regexp-opt
    '("(declare\n"
      "(dolist\n"
@@ -69,7 +69,7 @@
      "(with-current-buffer\n"))
   "To e.g. join '(while' to its condition.")
 
-(defconst elfmt-type-2-widows
+(defconst elfmt-join-2-widows
   (format "%s [[:graph:]]+$"
           (regexp-opt
            '("(cl-defgeneric"
@@ -84,7 +84,7 @@
              "(defun")))
   "To e.g. join '(defun <name>' to its argument list.")
 
-(defconst elfmt-type-3-widows
+(defconst elfmt-join-3-widows
   (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("(declare-function")))
   "To e.g. join '(declare-function <name> <file>' to its argument list.")
 
@@ -260,9 +260,9 @@ join widowed lines with the next line, and fix indentation."
    ((or
      ;; inverse of `backward-prefix-chars':
      (ignore (skip-chars-forward "`#'@^ " (point-at-eol)))
-     (looking-at elfmt-type-1-widows)
-     (looking-at elfmt-type-2-widows)
-     (looking-at elfmt-type-3-widows)
+     (looking-at elfmt-join-1-widows)
+     (looking-at elfmt-join-2-widows)
+     (looking-at elfmt-join-3-widows)
      (looking-at ":[[:graph:]]+[^\"]$") ; symbols, but not in strings
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
