@@ -11,9 +11,14 @@
   "Defvar nil with a very very long docstring attached to the end.")
 
 (defun long-list ()
-  "Long lists with no nesting don't get reformatted."
-  (insert "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x" "x"
-          "x" "x" "x" "x" "x"))
+  "Long forms that don't exceed `fill-column' don't get reformatted.
+But if a user let this list exceed `fill-column' it would get reformatted."
+  (list
+   '------------------------------ '------------------------------
+   '------------------------------
+   '------------------------------ '------------------------------
+   '------------------------------
+   '------------------------------))
 
 (defun short-list ()
   "A short list with inline nofmt comments."

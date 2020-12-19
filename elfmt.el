@@ -29,8 +29,10 @@
 ;;; Code:
 
 (require 'cl-lib)
-(declare-function doom-modeline-update-buffer-file-name "ext:doom-modeline" nil t)
-(declare-function doom-modeline-update-buffer-file-state-icon "ext:doom-modeline" nil t)
+(declare-function doom-modeline-update-buffer-file-name
+                  "ext:doom-modeline" nil t)
+(declare-function doom-modeline-update-buffer-file-state-icon
+                  "ext:doom-modeline" nil t)
 
 (defgroup elfmt nil
   "Code formatter for elisp"
@@ -203,6 +205,18 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
           (not (looking-back "^[ \t]*" (point-at-bol))))
     (unless (nth 3 (syntax-ppss))
       (forward-char 1)
+      (open-line 1)))
+  ;; break the line on atoms if it's still too long:
+  (elfmt--goto-eol-cleanup-whitespace)
+  (when (>= (current-column) fill-column)
+    (while (and
+            (skip-chars-backward "[:graph:]" (point-at-bol))
+            (skip-chars-backward "[:space:]" (point-at-bol))
+            (not (bolp))
+            (let ((state (syntax-ppss)))
+              (and
+               (not (nth 3 state))
+               (not (nth 4 state)))))
       (open-line 1))))
 
 (defun elfmt--goto-eol-cleanup-whitespace ()
