@@ -13,7 +13,7 @@ This is (yet another) code formatter for Emacs Lisp.
 - Tries to break at ~fill-column~, but lines may exceed this number
   due to inline comments, long literals, trailing sequences of closed
   parens, or matches on widows (see ~elfmt-type-1-widows~, etc.)
-- Prefers "modern" elisp (old-style backquotes will cause it to halt)
+- Prefers "modern" Elisp (old-style backquotes will cause it to halt)
 
 *** Usage
 

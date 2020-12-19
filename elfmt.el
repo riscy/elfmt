@@ -1,4 +1,4 @@
-;;; elfmt.el --- Code formatter for elisp *- lexical-binding: t -*-
+;;; elfmt.el --- Code formatter for Elisp -*- lexical-binding: t -*-
 
 ;; Authors: Chris Rayner (dchrisrayner@gmail.com)
 ;; Created: Sep 5 2020
@@ -18,7 +18,7 @@
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
 ;;   parens, or matches on widows (see `elfmt-join-1-widows', etc.)
-;; - Prefers "modern" elisp (old-style backquotes will cause it to halt)
+;; - Prefers "modern" Elisp (old-style backquotes will cause it to halt)
 ;;
 ;; Usage:
 ;; - Use M-x elfmt to format the current buffer
@@ -35,7 +35,7 @@
                   "ext:doom-modeline" nil t)
 
 (defgroup elfmt nil
-  "Code formatter for elisp"
+  "Code formatter for Elisp"
   :prefix "elfmt-"
   :group 'elfmt
   :link '(url-link :tag "URL" "https://github.com/riscy/elfmt")
