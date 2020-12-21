@@ -131,6 +131,9 @@
         (gc-cons-threshold most-positive-fixnum)) ; speedup
     (save-excursion
       (forward-char 1)
+      (when (nth 3 (syntax-ppss))
+        ;; if we're on or inside a string, `up-list' will misbehave
+        (user-error "Can't format inside strings"))
       (while (ignore-errors (or (up-list) t)))
       (backward-sexp)
       (elfmt--sexp))
