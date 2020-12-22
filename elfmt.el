@@ -132,10 +132,11 @@
   (let ((start-time (current-time))
         (gc-cons-threshold most-positive-fixnum)) ; speedup
     (save-excursion
-      (forward-char 1)
+      (forward-char 1) ; ensure we format what's front of us
       (when (nth 3 (syntax-ppss))
-        ;; if we're on or inside a string, `up-list' will misbehave
-        (user-error "Can't format inside strings"))
+        ;; if we're inside a string, `up-list' will misbehave;
+        ;; the edge cases are a pain to handle, so just panic:
+        (user-error "`elfmt-sexp' can't format inside strings"))
       (while (ignore-errors (or (up-list) t)))
       (backward-sexp)
       (elfmt--sexp))
@@ -249,7 +250,7 @@ comments, closing parentheses, and backslash abbreviations like
      (string-match "\n" sexp-str)  ; sexp crosses to the next line
      (setq sexp-str (format "%S" (car (read-from-string sexp-str))))
      (< (length sexp-str) (- fill-column (current-column))) ; mostly fits
-     (< (cl-count ?\( sexp-str) 5)
+     (< (cl-count ?\( sexp-str) 5) ; visual complexity (i.e. nested parens)
      (save-excursion
        (and
         (not (elfmt--trailing-syntax))     ; not inside a string/comment
@@ -271,14 +272,14 @@ join widowed lines with the next line, and fix indentation."
   (skip-chars-forward "[:space:]" (point-at-eol))
   (cond
    ((looking-at ";[^;]")
-    (save-excursion (insert ";")))
+    (save-excursion (insert ";"))) ; start single-line comments with ;;
    ((or
      ;; inverse of `backward-prefix-chars':
      (ignore (skip-chars-forward "`#'@^ " (point-at-eol)))
      (looking-at elfmt-join-1-widows)
      (looking-at elfmt-join-2-widows)
      (looking-at elfmt-join-3-widows)
-     (looking-at ":[[:graph:]]+[^\"]$") ; symbols, but not in strings
+     (looking-at ":[[:graph:]]+$") ; :keywords e.g. for `plist-get'
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
   (when (eq (char-before (point-at-eol)) ?\()
