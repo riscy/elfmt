@@ -89,7 +89,7 @@
   "To e.g. join '(defun <name>' to its argument list.")
 
 (defconst elfmt-join-3-widows
-  (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("(declare-function")))
+  (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("^(declare-function")))
   "To e.g. join '(declare-function <name> <file>' to its argument list.")
 
 ;;;###autoload
