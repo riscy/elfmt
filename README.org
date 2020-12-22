@@ -11,7 +11,7 @@ This is (yet another) code formatter for Emacs Lisp.
 - Focuses on the placement of lists and (mostly) ignores atoms
 - Tries to break at ~fill-column~, but lines may exceed this number
   due to inline comments, long literals, trailing sequences of closed
-  parens, or matches on widows (see ~elfmt-type-1-widows~, etc.)
+  parens, or matches on "widows" (see ~elfmt-autojoin-1~ for example)
 - Prefers "modern" Elisp (old-style backquotes will cause it to halt)
 
 *** Usage

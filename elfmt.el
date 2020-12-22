@@ -16,7 +16,7 @@
 ;; - Focuses on the placement of lists and (mostly) ignores atoms
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
-;;   parens, or matches on widows (see `elfmt-join-1-widows', etc.)
+;;   parens, or matches on widows (see `elfmt-autojoin-1' for example)
 ;; - Prefers "modern" Elisp (old-style backquotes will cause it to halt)
 ;;
 ;; Usage:
@@ -40,7 +40,7 @@
   :link '(url-link :tag "URL" "https://github.com/riscy/elfmt")
   :link '(emacs-commentary-link :tag "Commentary" "shx.el"))
 
-(defconst elfmt-join-1-widows
+(defconst elfmt-autojoin-1
   (regexp-opt
    '( ; keep this list sorted
      "(advice-add\n"
@@ -70,7 +70,7 @@
      ))
   "To e.g. join '(while' to its condition.")
 
-(defconst elfmt-join-2-widows
+(defconst elfmt-autojoin-2
   (format "%s [[:graph:]]+$"
           (regexp-opt
            '( ; keep this list sorted
@@ -88,7 +88,7 @@
              )))
   "To e.g. join '(defun <name>' to its argument list.")
 
-(defconst elfmt-join-3-widows
+(defconst elfmt-autojoin-3
   (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("^(declare-function")))
   "To e.g. join '(declare-function <name> <file>' to its argument list.")
 
@@ -172,7 +172,7 @@ NOTE: skips sexps whose car is in `elfmt-nofmt-functions'."
   (save-excursion
     (when n (forward-line n))
     (or
-     (= (point-at-bol) (point-at-eol))
+     (and (bolp) (eolp)) ; the line is empty
      (string=
       (buffer-substring (- (point-at-eol) 7) (point-at-eol))
       "; nofmt"))))
@@ -231,7 +231,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
 
 (defun elfmt--mend-line ()
   "Join the current line up with the lines beneath it, when feasible."
-  ;; precond: (eq (point) (point-at-bol))
+  ;; precond: (bolp)
   (funcall indent-line-function)
   (and  ; move to the innermost sexp
    (> (skip-chars-forward "(" (point-at-eol)) 0)
@@ -276,9 +276,9 @@ join widowed lines with the next line, and fix indentation."
    ((or
      ;; inverse of `backward-prefix-chars':
      (ignore (skip-chars-forward "`#'@^ " (point-at-eol)))
-     (looking-at elfmt-join-1-widows)
-     (looking-at elfmt-join-2-widows)
-     (looking-at elfmt-join-3-widows)
+     (looking-at elfmt-autojoin-1)
+     (looking-at elfmt-autojoin-2)
+     (looking-at elfmt-autojoin-3)
      (looking-at ":[[:graph:]]+$") ; :keywords e.g. for `plist-get'
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
