@@ -27,10 +27,12 @@ But if a user let this list exceed `fill-column' it would get reformatted."
           "x"                           ; nofmt
           ))
 
+"(Don't format strings, even if they look like sexps.)"
+
 (defun parentheses-inside-strings ()
-  "Parentheses, inside a string."
+  "(Parentheses, inside a string)."
   '('(10)
-    "((This could fit, but doesn't becauae of parens.)"
+    "((Could be on one line, but too many parens.))"
     '(10)))
 
 (defun backquoted-lambda (regexp)
