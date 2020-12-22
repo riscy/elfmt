@@ -42,7 +42,8 @@
 
 (defconst elfmt-join-1-widows
   (regexp-opt
-   '("(advice-add\n"
+   '( ; keep this list sorted
+     "(advice-add\n"
      "(declare\n"
      "(defun\n" ; in case of very long function names
      "(defvar\n"
@@ -63,14 +64,17 @@
      "(when-let\n"
      "(when\n"
      "(while\n"
+     "(with-current-buffer\n"
      "(with-suppressed-warnings\n"
-     "(with-current-buffer\n"))
+     ;; keep this list sorted
+     ))
   "To e.g. join '(while' to its condition.")
 
 (defconst elfmt-join-2-widows
   (format "%s [[:graph:]]+$"
           (regexp-opt
-           '("(cl-defgeneric"
+           '( ; keep this list sorted
+             "(cl-defgeneric"
              "(cl-defmacro"
              "(cl-defmethod"
              "(cl-defsubst"
@@ -79,7 +83,9 @@
              "(defclass"
              "(defmacro"
              "(defsubst"
-             "(defun")))
+             "(defun"
+             ;; keep this list sorted
+             )))
   "To e.g. join '(defun <name>' to its argument list.")
 
 (defconst elfmt-join-3-widows
