@@ -165,8 +165,13 @@ Or just a single column:
 ;; End:
 "))
 
-"An apparent symbol at the end of a string is left alone:
+"An apparent keyword at the end of a string is left alone:
 :test"
+
+(defun elfmt-symbol-test ()
+  "An apparent keyword at the end of a string is left alone.
+:test"
+  (list 1 2 3))
 
 (defun elfmt-test-spacing ()
   "Spacing issues like these can occur due to `fixup-whitespace'."
