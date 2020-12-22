@@ -183,13 +183,14 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
   ;; break the line on open parentheses:
   (while (and
           ;; the following matches _any_ open paren, including ones in strings
-          ;; and characters (i.e. ?\(); it also assumes all the elements are
+          ;; and characters [i.e. ?\(]; it also assumes all the elements are
           ;; separated by spaces. It would be more correct to use `scan-lists'
           ;; but that would make it harder to constrain the point to one line,
           ;; and would also be slower; `scan-lists' is also not foolproof e.g.
           ;; when the point is inside a string!
-          (re-search-backward "[^(](" (point-at-bol) t)
+          (re-search-backward "[^(\"](" (point-at-bol) t)
           (or (forward-char 1) t)
+          ;; `backward-prefix-chars' fails on ?\( so just look for whitespace:
           (skip-chars-backward "[:graph:]" (point-at-bol))
           (skip-chars-backward "[:space:]" (point-at-bol))
           (not (bolp)))

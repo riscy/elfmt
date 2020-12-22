@@ -12,6 +12,12 @@
 
 ;;; Code:
 
+(defun testing-188 ()
+  "This form should always result in three (not two) lines after formatting."
+  (list
+   'hello
+   "((long strings inside parens should not be mistaken for sexps))"))
+
 (defvar-local defvar-nil
   '()
   "Defvar nil with a very very long docstring attached to the end.")
