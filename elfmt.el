@@ -97,8 +97,8 @@
   "Toggle elfmt-mode on or off."
   :lighter " fmt"
   (cond
-   (elfmt-mode (add-hook 'before-save-hook #'elfmt))
-   (t (remove-hook 'before-save-hook #'elfmt))))
+   (elfmt-mode (add-hook 'before-save-hook #'elfmt 0 t))
+   (t (remove-hook 'before-save-hook #'elfmt t))))
 
 ;;;###autoload
 (define-globalized-minor-mode elfmt-global-mode elfmt-mode elfmt--global-on)
