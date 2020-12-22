@@ -49,7 +49,10 @@
 
 (defconst elfmt-join-1-widows
   (regexp-opt
-   '("(declare\n"
+   '("(advice-add\n"
+     "(declare\n"
+     "(defun\n" ; in case of very long function names
+     "(defvar\n"
      "(dolist\n"
      "(dotimes\n"
      "(if-let*\n"
