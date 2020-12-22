@@ -279,7 +279,7 @@ join widowed lines with the next line, and fix indentation."
      (looking-at elfmt-autojoin-1)
      (looking-at elfmt-autojoin-2)
      (looking-at elfmt-autojoin-3)
-     (looking-at ":\\_<[[:graph:]]+\\_>$") ; :keywords e.g. for `plist-get'
+     (looking-at ":[[:graph:]]+\\_>$") ; :keywords e.g. for `plist-get'
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join 1)))
   (when (eq (char-before (point-at-eol)) ?\()
