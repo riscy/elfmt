@@ -1,4 +1,10 @@
-;;; test-elfmt.el --- Regression tests for elfmt -*- lexical-binding: t -*-
+;;; elfmt-test.el --- Regression tests for elfmt -*- lexical-binding: t -*-
+
+;; Authors: Chris Rayner (dchrisrayner@gmail.com)
+;; Created: Sep 5 2020
+;; Keywords: lisp
+;; URL: https://github.com/riscy/elfmt
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
 
@@ -156,8 +162,8 @@ Or just a single column:
 "An apparent symbol at the end of a string is left alone:
 :test"
 
-(defun testing-2342 ()
-  "Known spacing issue due to `fixup-whitespace'."
+(defun elfmt-test-spacing ()
+  "Spacing issues like these can occur due to `fixup-whitespace'."
   (if (eq ?\((char-after)) (message "Mashed")))
 
 (defun elfmt--postprocess-line-join ; (unless there's a trailing comment)

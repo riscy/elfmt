@@ -23,7 +23,7 @@
 ;; - Use M-x elfmt to format the current buffer
 ;; - Use M-x elfmt-sexp to format the current sexp.
 ;; - Use M-x elfmt-mode to automatically format the buffer on save
-;; - Use M-x elfmt-global-mode to enable it `elfmt-mode' everywhere
+;; - Use M-x elfmt-global-mode to enable `elfmt-mode' everywhere
 
 ;;; Code:
 
@@ -45,8 +45,8 @@
    '( ; keep this list sorted
      "(advice-add\n"
      "(declare\n"
-     "(defun\n" ; in case of very long function names
-     "(defvar\n"
+     "(defun\n"  ; elisp font-locking needs function name on same line
+     "(defvar\n" ; elisp font-locking needs variable name on same line
      "(dolist\n"
      "(dotimes\n"
      "(if-let*\n"
@@ -144,8 +144,7 @@
              (* 1000 (float-time (time-since start-time))))))
 
 (defun elfmt--sexp ()
-  "Format the sexp starting at the point.
-NOTE: skips sexps whose car is in `elfmt-nofmt-functions'."
+  "Format the sexp starting at the point."
   ;; precond: point is on an sexp
   (let ((original-sexp (sexp-at-point)))
     (when (and original-sexp (listp original-sexp))
