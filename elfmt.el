@@ -207,12 +207,12 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
     (while (and
             (skip-chars-backward "[:graph:]" (point-at-bol))
             (skip-chars-backward "[:space:]" (point-at-bol))
-            (not (bolp))
-            (let ((state (syntax-ppss)))
-              (and
-               (not (nth 3 state))
-               (not (nth 4 state)))))
-      (open-line 1))))
+            (not (bolp)))
+      (let ((state (syntax-ppss)))
+        (and
+         (not (nth 3 state))
+         (not (nth 4 state))
+         (open-line 1))))))
 
 (defun elfmt--goto-eol-cleanup-whitespace ()
   "Move point to the end of the line; cleanup trailing whitespace."

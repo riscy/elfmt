@@ -10,6 +10,12 @@
   '()
   "Defvar nil with a very very long docstring attached to the end.")
 
+(defun long-function-name---------------------------------------------------------------
+    ()
+  "Long documentation string----------------------------------------------------------."
+  "Short string."
+  "Long return string-----------------------------------------------------------------.")
+
 (defun long-list ()
   "Long forms that don't exceed `fill-column' don't get reformatted.
 But if a user let this list exceed `fill-column' it would get reformatted."
