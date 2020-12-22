@@ -13,7 +13,6 @@
 ;; Simple code formatter for Emacs Lisp.  Features:
 ;;
 ;; - Won't format lines that end in '; nofmt'
-;; - Won't format sexps in its exclusion list (see `elfmt-nofmt-sexps')
 ;; - Focuses on the placement of lists and (mostly) ignores atoms
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
@@ -40,12 +39,6 @@
   :group 'elfmt
   :link '(url-link :tag "URL" "https://github.com/riscy/elfmt")
   :link '(emacs-commentary-link :tag "Commentary" "shx.el"))
-
-(defcustom elfmt-nofmt-sexps
-  '()
-  "List of sexps that `elfmt' won't apply formatting to."
-  :link '(function-link elfmt-sexp)
-  :type '(repeat string))
 
 (defconst elfmt-join-1-widows
   (regexp-opt
@@ -145,13 +138,10 @@
 
 (defun elfmt--sexp ()
   "Format the sexp starting at the point.
-NOTE: skips lists whose car is in `elfmt-nofmt-sexps'."
+NOTE: skips sexps whose car is in `elfmt-nofmt-functions'."
   ;; precond: point is on an sexp
   (let ((original-sexp (sexp-at-point)))
-    (when (and
-           original-sexp
-           (listp original-sexp)
-           (not (member (car original-sexp) elfmt-nofmt-sexps)))
+    (when (and original-sexp (listp original-sexp))
       (goto-char (point-at-bol))
       (elfmt--map-sexp-lines #'elfmt--break-line)
       (elfmt--map-sexp-lines #'elfmt--mend-line)
