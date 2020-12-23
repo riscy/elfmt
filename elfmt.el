@@ -94,11 +94,12 @@
 
 ;;;###autoload
 (define-minor-mode elfmt-mode
-  "Toggle elfmt-mode on or off."
+  "Toggle elfmt-mode on or off.
+This formats buffers before saving via a local hook."
   :lighter " fmt"
-  (cond
-   (elfmt-mode (add-hook 'before-save-hook #'elfmt 0 t))
-   (t (remove-hook 'before-save-hook #'elfmt t))))
+  (if elfmt-mode
+      (add-hook 'before-save-hook #'elfmt-buffer 0 t)
+    (remove-hook 'before-save-hook #'elfmt-buffer t)))
 
 ;;;###autoload
 (define-globalized-minor-mode elfmt-global-mode elfmt-mode elfmt--global-on)
@@ -108,11 +109,17 @@
   (when (eq major-mode 'emacs-lisp-mode) (elfmt-mode +1)))
 
 (defun elfmt ()
-  "Format the current buffer."
+  "Format the current buffer.
+Interactive version of `elfmt-buffer' that reports timing."
   (interactive)
+  (let ((start-time (current-time)))
+    (elfmt-buffer)
+    (message "`elfmt' took %dms" (* 1000 (float-time (time-since start-time))))))
+
+(defun elfmt-buffer ()
+  "Format the current buffer."
   (barf-if-buffer-read-only)
-  (let ((start-time (current-time))
-        (inhibit-modification-hooks t)            ; speedup
+  (let ((inhibit-modification-hooks t)            ; speedup
         (gc-cons-threshold most-positive-fixnum)) ; speedup
     (save-excursion
       (goto-char (point-max))
@@ -123,8 +130,7 @@
     ;; TODO: fix whitespace between top-level sexps
     (when (bound-and-true-p doom-modeline-mode) ; in lieu of modification hooks
       (doom-modeline-update-buffer-file-name)
-      (doom-modeline-update-buffer-file-state-icon))
-    (message "`elfmt' took %dms" (* 1000 (float-time (time-since start-time))))))
+      (doom-modeline-update-buffer-file-state-icon))))
 
 (defun elfmt-sexp ()
   "Format the current (top level) sexp."
