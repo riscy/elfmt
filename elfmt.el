@@ -188,7 +188,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
           ;; but that would make it harder to constrain the point to one line,
           ;; and would also be slower; `scan-lists' is also not foolproof e.g.
           ;; when the point is inside a string!
-          (re-search-backward "[^(\"](" (point-at-bol) t)
+          (re-search-backward "[^(](" (point-at-bol) t)
           (or (forward-char 1) t)
           ;; `backward-prefix-chars' fails on ?\( so just look for whitespace:
           (skip-chars-backward "[:graph:]" (point-at-bol))

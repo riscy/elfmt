@@ -13,10 +13,12 @@
 ;;; Code:
 
 (defun testing-188 ()
-  "This form should always result in three (not two) lines after formatting."
-  (list
-   'hello
-   "((long strings inside parens should not be mistaken for sexps))"))
+  "Example of a parens-in-string form that's hard to get right.
+The parens in the string will cause `elfmt--break-line' to break
+the line a little early, even though it would be more correct to
+distribute the form across 3 lines."
+  (list 'hello
+        "long-strings-including_parens()-are-sometimes-mistaken-for-sexps"))
 
 (defvar-local defvar-nil
   '()
