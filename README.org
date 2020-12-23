@@ -14,6 +14,29 @@ This is (yet another) code formatter for Emacs Lisp.
   parens, or postprocessing (see ~elfmt-autojoin-1~ for example)
 - Prefers "modern" Elisp (old-style backquotes will cause it to halt)
 
+*** 'Screenshot'
+    #+begin_src elisp
+    (defun elfmt--mend-line-p ()
+      "Whether to join the current line with the next.
+    This uses heuristics that disregard the contributions of trailing
+    comments, closing parentheses, and backslash abbreviations like
+    \\n, so lines may end up longer than `fill-column'."
+      ;; precond: point is on an sexp
+      (let ((sexp-str (thing-at-point 'sexp)))
+        (and
+         sexp-str
+         (string-match "\n" sexp-str)  ; sexp crosses to the next line
+         (setq sexp-str (format "%S" (car (read-from-string sexp-str))))
+         (< (length sexp-str) (- fill-column (current-column))) ; mostly fits
+         (< (cl-count ?\( sexp-str) 5) ; visual complexity (i.e. nested parens)
+         (save-excursion
+           (and
+            (not (elfmt--trailing-syntax))     ; not inside a string/comment
+            (eq (forward-line 1) 0)            ; and the next line, if any:
+            (not (looking-at "[[:space:]]*;")) ; ...is not a comment
+            (not (elfmt--nofmt-line-p)))))))
+    #+end_src
+
 *** Usage
 
 - Type =M-x elfmt= to format the current buffer
