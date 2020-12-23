@@ -234,6 +234,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
   ;; precond: (bolp)
   (funcall indent-line-function)
   (and  ; move to the innermost sexp
+   (elfmt--forward-prefix-chars)
    (> (skip-chars-forward "(" (point-at-eol)) 0)
    (backward-char))
   (while (elfmt--mend-line-p) (save-excursion (join-line 1))))
@@ -274,8 +275,7 @@ join widowed lines with the next line, and fix indentation."
    ((looking-at ";[^;]")
     (save-excursion (insert ";"))) ; start single-line comments with ;;
    ((or
-     ;; inverse of `backward-prefix-chars':
-     (ignore (skip-chars-forward "`#'@^ " (point-at-eol)))
+     (ignore (elfmt--forward-prefix-chars))
      (looking-at elfmt-autojoin-1)
      (looking-at elfmt-autojoin-2)
      (looking-at elfmt-autojoin-3)
@@ -285,6 +285,10 @@ join widowed lines with the next line, and fix indentation."
   (when (eq (char-before (point-at-eol)) ?\()
     (elfmt--postprocess-join 1))
   (funcall indent-line-function))
+
+(defun elfmt--forward-prefix-chars ()
+  "Inverse of `backward-prefix-chars' but counts the chars skipped."
+  (skip-chars-forward "`#'@^ " (point-at-eol)))
 
 (defun elfmt--postprocess-join (n)
   "Join the current line with the next, as many as N times."
