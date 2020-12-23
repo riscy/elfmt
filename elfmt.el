@@ -44,9 +44,11 @@
   (regexp-opt
    '( ; keep this list sorted
      "(advice-add\n"
+     "(declare-function\n"
      "(declare\n"
-     "(defun\n"  ; elisp font-locking needs function name on same line
-     "(defvar\n" ; elisp font-locking needs variable name on same line
+     "(defcustom\n"
+     "(defun\n"
+     "(defvar\n"
      "(dolist\n"
      "(dotimes\n"
      "(if-let*\n"
