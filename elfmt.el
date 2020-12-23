@@ -16,7 +16,7 @@
 ;; - Focuses on the placement of lists and (mostly) ignores atoms
 ;; - Tries to break at `fill-column', but lines may exceed this number
 ;;   due to inline comments, long literals, trailing sequences of closed
-;;   parens, or matches on widows (see `elfmt-autojoin-1' for example)
+;;   parens, or postprocessing (see `elfmt-autojoin-1' for example)
 ;; - Prefers "modern" Elisp (old-style backquotes will cause it to halt)
 ;;
 ;; Usage:
