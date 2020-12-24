@@ -202,11 +202,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
           (skip-chars-backward "[:graph:]" (point-at-bol))
           (skip-chars-backward "[:space:]" (point-at-bol))
           (not (bolp)))
-    (let ((state (syntax-ppss)))
-      (and
-       (not (nth 3 state))
-       (not (nth 4 state))
-       (open-line 1))))
+    (when (elfmt--can-format-p (point)) (open-line 1)))
   (elfmt--goto-eol-cleanup-whitespace)
   ;; break the line on close parentheses:
   (while (and
@@ -223,11 +219,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
             (skip-chars-backward "[:graph:]" (point-at-bol))
             (skip-chars-backward "[:space:]" (point-at-bol))
             (not (bolp)))
-      (let ((state (syntax-ppss)))
-        (and
-         (not (nth 3 state))
-         (not (nth 4 state))
-         (open-line 1))))))
+      (when (elfmt--can-format-p (point)) (open-line 1)))))
 
 (defun elfmt--goto-eol-cleanup-whitespace ()
   "Move point to the end of the line; cleanup trailing whitespace."
@@ -262,16 +254,17 @@ comments, closing parentheses, and backslash abbreviations like
      (< (cl-count ?\( sexp-str) 5) ; visual complexity (i.e. nested parens)
      (save-excursion
        (and
-        (not (elfmt--trailing-syntax))     ; not inside a string/comment
-        (eq (forward-line 1) 0)            ; and the next line, if any:
-        (not (looking-at "[[:space:]]*;")) ; ...is not a comment
-        (not (elfmt--nofmt-line-p)))))))   ; ...is not nofmt
+        (elfmt--can-format-p (point-at-eol)) ; it's safe to reformat here
+        (eq (forward-line 1) 0)              ; and the next line, if any:
+        (not (looking-at "[[:space:]]*;"))   ; ...is not a comment
+        (not (elfmt--nofmt-line-p)))))))     ; ...is not nofmt
 
-(defun elfmt--trailing-syntax ()
-  "Does the end of the line terminate the syntax field?
-Modifies the point due to calls to `syntax-ppss'."
-  (let ((state (syntax-ppss (point-at-eol))))
-    (or (nth 3 state) (nth 4 state))))
+(defun elfmt--can-format-p (pos)
+  "Is the Elisp code at POS formatable?
+Code inside strings and comments can't be reformated.
+This may modify the point due to calls to `syntax-ppss'."
+  (let ((state (syntax-ppss pos)))
+    (not (or (nth 3 state) (nth 4 state)))))
 
 (defun elfmt--postprocess-line ()
   "Run postprocessors on the line at point.
@@ -300,7 +293,10 @@ join widowed lines with the next line, and fix indentation."
 
 (defun elfmt--postprocess-join ()
   "Join the current line with the next."
-  (or (elfmt--nofmt-line-p +1) (elfmt--trailing-syntax) (elfmt--join-line)))
+  (or
+   (elfmt--nofmt-line-p +1)
+   (not (elfmt--can-format-p (point-at-eol)))
+   (elfmt--join-line)))
 
 (defun elfmt--join-line ()
   "Patches `join-line' to not incorrectly remove spaces.
