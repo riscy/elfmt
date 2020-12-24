@@ -235,11 +235,21 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
   "Join the current line up with the lines beneath it, when feasible."
   ;; precond: (bolp)
   (funcall indent-line-function)
-  (and  ; move to the innermost sexp
-   (elfmt--forward-prefix-chars)
-   (> (skip-chars-forward "(" (point-at-eol)) 0)
-   (backward-char))
+  (elfmt--goto-innermost-sexp)
   (while (elfmt--mend-line-p) (save-excursion (elfmt--join-line))))
+
+(defun elfmt--goto-innermost-sexp ()
+  "Move the point to the innermost sexp on the current line."
+  (skip-chars-forward "`#'@^, (" (point-at-eol)) ; prefix chars
+  (and (eq (char-before) ?\() (backward-char)))
+
+(defun elfmt--join-line ()
+  "Patches `join-line' to not remove when lines end in \\(."
+  (join-line 1)
+  (and
+   (eq (char-before (1- (point))) ?\\)
+   (eq (char-before) ?\( )
+   (insert " ")))
 
 (defun elfmt--mend-line-p ()
   "Whether to join the current line with the next.
@@ -278,7 +288,7 @@ join widowed lines with the next line, and fix indentation."
    ((looking-at ";[^;]")
     (save-excursion (insert ";"))) ; start single-line comments with ;;
    ((or
-     (ignore (elfmt--forward-prefix-chars))
+     (ignore (elfmt--goto-innermost-sexp))
      (looking-at elfmt-autojoin-1)
      (looking-at elfmt-autojoin-2)
      (looking-at elfmt-autojoin-3)
@@ -289,25 +299,12 @@ join widowed lines with the next line, and fix indentation."
     (elfmt--postprocess-join))
   (funcall indent-line-function))
 
-(defun elfmt--forward-prefix-chars ()
-  "Inverse of `backward-prefix-chars' but counts the chars skipped."
-  (skip-chars-forward "`#'@^ " (point-at-eol)))
-
 (defun elfmt--postprocess-join ()
   "Join the current line with the next."
   (or
    (elfmt--nofmt-line-p +1)
    (not (elfmt--can-format-p (point-at-eol)))
    (elfmt--join-line)))
-
-(defun elfmt--join-line ()
-  "Patches `join-line' to not incorrectly remove spaces.
-i.e. when lines end in \\(."
-  (join-line 1)
-  (and
-   (eq (char-before) ?\()
-   (eq (char-before (1- (point))) ?\\)
-   (insert " ")))
 
 (defun elfmt--looking-at-orphan-parens ()
   "Return non-nil if there are orphan parens on the next line."

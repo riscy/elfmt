@@ -77,7 +77,8 @@ last.  FORMS are the expressions to be threaded."
        ,first?
        ,(if first? `(,f ,x ,@args) `(,f ,@args ,x))
        ,@rest))
-    (`(,x ,f . ,rest) `(internal--thread-argument ,first? (,f ,x) ,@rest))
+    (`(,x ,f . ,rest)
+     `(internal--thread-argument ,first? (,f ,x) ,@rest))
     (_ (car forms))))
 
 (defun thing-at-point--beginning-of-sexp ()
@@ -115,8 +116,7 @@ last.  FORMS are the expressions to be threaded."
 ;;   nil)
 
 (defvar git-commit-elisp-text-mode-keywords
-  `((,(concat
-       "[`‘]\\(" lisp-mode-symbol-regexp "\\)['’]")
+  `((,(concat "[`‘]\\(" lisp-mode-symbol-regexp "\\)['’]")
      (1 font-lock-constant-face prepend))
     ("\"[^\"]*\"" (0 font-lock-string-face prepend))))
 
