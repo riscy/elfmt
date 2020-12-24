@@ -212,9 +212,11 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
     (unless (nth 3 (syntax-ppss))
       (forward-char 1)
       (open-line 1)))
-  ;; break the line on atoms if it's still too long:
+  ;; 'atomize' line if it's still too long and doesn't end in a comment:
   (elfmt--goto-eol-cleanup-whitespace)
-  (when (>= (current-column) fill-column)
+  (when (and
+         (>= (current-column) fill-column)
+         (not (nth 4 (syntax-ppss))))
     (while (and
             (skip-chars-backward "[:graph:]" (point-at-bol))
             (skip-chars-backward "[:space:]" (point-at-bol))
