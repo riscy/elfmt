@@ -245,7 +245,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
    (elfmt--forward-prefix-chars)
    (> (skip-chars-forward "(" (point-at-eol)) 0)
    (backward-char))
-  (while (elfmt--mend-line-p) (save-excursion (join-line 1))))
+  (while (elfmt--mend-line-p) (save-excursion (elfmt--join-line))))
 
 (defun elfmt--mend-line-p ()
   "Whether to join the current line with the next.
@@ -289,19 +289,27 @@ join widowed lines with the next line, and fix indentation."
      (looking-at elfmt-autojoin-3)
      (looking-at ":[[:graph:]]+\\_>$") ; :keywords e.g. for `plist-get'
      (elfmt--looking-at-orphan-parens))
-    (elfmt--postprocess-join 1)))
+    (elfmt--postprocess-join)))
   (when (eq (char-before (point-at-eol)) ?\()
-    (elfmt--postprocess-join 1))
+    (elfmt--postprocess-join))
   (funcall indent-line-function))
 
 (defun elfmt--forward-prefix-chars ()
   "Inverse of `backward-prefix-chars' but counts the chars skipped."
   (skip-chars-forward "`#'@^ " (point-at-eol)))
 
-(defun elfmt--postprocess-join (n)
-  "Join the current line with the next, as many as N times."
-  (dotimes (_ (or n 1))
-    (or (elfmt--nofmt-line-p +1) (elfmt--trailing-syntax) (join-line 1))))
+(defun elfmt--postprocess-join ()
+  "Join the current line with the next."
+  (or (elfmt--nofmt-line-p +1) (elfmt--trailing-syntax) (elfmt--join-line)))
+
+(defun elfmt--join-line ()
+  "Patches `join-line' to not incorrectly remove spaces.
+i.e. when lines end in \\(."
+  (join-line 1)
+  (and
+   (eq (char-before) ?\()
+   (eq (char-before (1- (point))) ?\\)
+   (insert " ")))
 
 (defun elfmt--looking-at-orphan-parens ()
   "Return non-nil if there are orphan parens on the next line."
