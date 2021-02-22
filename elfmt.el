@@ -209,17 +209,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
           (not (looking-back "^[ \t]*" (point-at-bol))))
     (unless (nth 3 (syntax-ppss))
       (forward-char 1)
-      (open-line 1)))
-  ;; 'atomize' line if it's still too long and doesn't end in a comment:
-  (elfmt--goto-eol-cleanup-whitespace)
-  (when (and
-         (>= (current-column) fill-column)
-         (not (nth 4 (syntax-ppss))))
-    (while (and
-            (skip-chars-backward "[:graph:]" (point-at-bol))
-            (skip-chars-backward "[:space:]" (point-at-bol))
-            (not (bolp)))
-      (when (elfmt--can-format-p (point)) (open-line 1)))))
+      (open-line 1))))
 
 (defun elfmt--goto-eol-cleanup-whitespace ()
   "Move point to the end of the line; cleanup trailing whitespace."
