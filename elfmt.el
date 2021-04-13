@@ -28,10 +28,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(declare-function doom-modeline-update-buffer-file-name
-                  "ext:doom-modeline" nil t)
-(declare-function doom-modeline-update-buffer-file-state-icon
-                  "ext:doom-modeline" nil t)
 
 (defgroup elfmt nil
   "Code formatter for Elisp"
@@ -121,18 +117,25 @@ Interactive version of `elfmt-buffer' that reports timing."
 (defun elfmt-buffer ()
   "Format the current buffer."
   (barf-if-buffer-read-only)
-  (let ((inhibit-modification-hooks t)            ; speedup
-        (gc-cons-threshold most-positive-fixnum)) ; speedup
-    (save-excursion
-      (goto-char (point-max))
-      (while (not (bobp))
-        (backward-sexp)
-        (elfmt--sexp)
-        (syntax-ppss-flush-cache (point)))) ; in lieu of modification hooks
+  (let* ((gc-cons-threshold most-positive-fixnum)
+         (unformatted (buffer-substring (point-min) (point-max)))
+         (formatted
+          (with-temp-buffer
+            (insert unformatted)
+            (emacs-lisp-mode)
+            (save-excursion
+              (goto-char (point-max))
+              (while (not (bobp))
+                (backward-sexp)
+                (elfmt--sexp)))
+            (buffer-substring (point-min) (point-max)))))
     ;; TODO: fix whitespace between top-level sexps
-    (when (bound-and-true-p doom-modeline-mode) ; in lieu of modification hooks
-      (doom-modeline-update-buffer-file-name)
-      (doom-modeline-update-buffer-file-state-icon))))
+    (unless (string= unformatted formatted)
+      (let ((point (point)))
+        (erase-buffer)
+        (insert formatted)
+        (goto-char point)
+        (recenter)))))
 
 (defun elfmt-sexp ()
   "Format the current (top level) sexp."
@@ -160,7 +163,7 @@ Interactive version of `elfmt-buffer' that reports timing."
       (elfmt--map-sexp-lines #'elfmt--postprocess-line)
       (or
        (equal (sexp-at-point) original-sexp)
-       (error "`elfmt' made a mistake on: %S" original-sexp)))))
+       (error "`elfmt' could not parse: %S" original-sexp)))))
 
 (defun elfmt--map-sexp-lines (formatting-func)
   "Apply FORMATTING-FUNC to every line of the sexp at point."
