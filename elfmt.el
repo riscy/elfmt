@@ -119,16 +119,7 @@ Interactive version of `elfmt-buffer' that reports timing."
   (barf-if-buffer-read-only)
   (let* ((gc-cons-threshold most-positive-fixnum)
          (unformatted (buffer-substring (point-min) (point-max)))
-         (formatted
-          (with-temp-buffer
-            (insert unformatted)
-            (emacs-lisp-mode)
-            (save-excursion
-              (goto-char (point-max))
-              (while (not (bobp))
-                (backward-sexp)
-                (elfmt--sexp)))
-            (buffer-substring (point-min) (point-max)))))
+         (formatted (elfmt--string unformatted)))
     ;; TODO: fix whitespace between top-level sexps
     (unless (string= unformatted formatted)
       (let ((point (point)))
@@ -148,9 +139,23 @@ Interactive version of `elfmt-buffer' that reports timing."
       (while (nth 3 (syntax-ppss)) (backward-char))
       (while (ignore-errors (or (up-list) t)))
       (backward-sexp)
-      (elfmt--sexp))
+      (let* ((unformatted (thing-at-point 'sexp))
+             (formatted (elfmt--string unformatted)))
+        (unless (string= unformatted formatted) (kill-sexp) (insert formatted))))
     (message "`elfmt-sexp' took %dms"
              (* 1000 (float-time (time-since start-time))))))
+
+(defun elfmt--string (string)
+  "Format the given STRING."
+  (declare (side-effect-free t))
+  (with-temp-buffer
+    (insert string)
+    (delay-mode-hooks
+      (emacs-lisp-mode)
+      (while (not (bobp))
+        (backward-sexp)
+        (elfmt--sexp)))
+    (buffer-substring (point-min) (point-max))))
 
 (defun elfmt--sexp ()
   "Format the sexp starting at the point."
