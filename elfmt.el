@@ -135,10 +135,7 @@ Interactive version of `elfmt-buffer' that reports timing."
         (gc-cons-threshold most-positive-fixnum)) ; speedup
     (save-excursion
       (forward-char 1) ; ensure we format what's front of us
-      ;; if we're inside a string, `up-list' will misbehave:
-      (while (nth 3 (syntax-ppss)) (backward-char))
-      (while (ignore-errors (or (up-list) t)))
-      (backward-sexp)
+      (beginning-of-defun)
       (let* ((unformatted (thing-at-point 'sexp))
              (formatted (elfmt--string unformatted)))
         (unless (string= unformatted formatted) (kill-sexp) (insert formatted))))
