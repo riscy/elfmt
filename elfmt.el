@@ -145,14 +145,15 @@ Interactive version of `elfmt-buffer' that reports timing."
 (defun elfmt--string (string)
   "Format the given STRING."
   (declare (side-effect-free t))
-  (with-temp-buffer
-    (insert string)
-    (delay-mode-hooks
-      (emacs-lisp-mode)
-      (while (not (bobp))
-        (backward-sexp)
-        (elfmt--sexp)))
-    (buffer-substring (point-min) (point-max))))
+  (when string
+    (with-temp-buffer
+      (insert string)
+      (delay-mode-hooks
+        (emacs-lisp-mode)
+        (while (not (bobp))
+          (backward-sexp)
+          (elfmt--sexp)))
+      (buffer-substring (point-min) (point-max)))))
 
 (defun elfmt--sexp ()
   "Format the sexp starting at the point."
