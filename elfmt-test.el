@@ -24,8 +24,7 @@ distribute the form across 3 lines."
   '()
   "Defvar nil with a very very long docstring attached to the end.")
 
-(defun long-function-name---------------------------------------------------------------
-    ()
+(defun long-function-name--------------------------------------------------------------- ()
   "Long documentation string----------------------------------------------------------."
   "Short string."
   "Long return string-----------------------------------------------------------------.")
