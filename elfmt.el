@@ -131,6 +131,7 @@ Interactive version of `elfmt-buffer' that reports timing."
 (defun elfmt-sexp ()
   "Format the current (top level) sexp."
   (interactive)
+  (barf-if-buffer-read-only)
   (let ((start-time (current-time))
         (gc-cons-threshold most-positive-fixnum)) ; speedup
     (save-excursion
