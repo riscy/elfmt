@@ -181,11 +181,8 @@ Interactive version of `elfmt-buffer' that reports timing."
   (declare (side-effect-free t))
   (save-excursion
     (when n (forward-line n))
-    (or
-     (and (bolp) (eolp)) ; the line is empty
-     (string=
-      (buffer-substring (- (point-at-eol) 7) (point-at-eol))
-      "; nofmt"))))
+    (goto-char (- (point-at-eol) 7))  ; (length "; nofmt") => 7
+    (string= (buffer-substring (point) (point-at-eol)) "; nofmt")))
 
 (defun elfmt--break-line ()
   "Break the line down at points where lists begin or end.
