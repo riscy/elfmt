@@ -34,7 +34,7 @@
   :prefix "elfmt-"
   :group 'elfmt
   :link '(url-link :tag "URL" "https://github.com/riscy/elfmt")
-  :link '(emacs-commentary-link :tag "Commentary" "shx.el"))
+  :link '(emacs-commentary-link :tag "Commentary" "elfmt.el"))
 
 (defconst elfmt-autojoin-1
   (regexp-opt
@@ -66,7 +66,9 @@
      "(with-suppressed-warnings\n"
      ;; keep this list sorted
      ))
-  "To e.g. join '(while' to its condition.")
+  "One-word pattern for lines that should be joined to the next.
+For example '(let' usually appears on the same line as the first
+variable it binds.")
 
 (defconst elfmt-autojoin-2
   (format "%s [[:graph:]]+$"
@@ -84,11 +86,15 @@
              "(defun"
              ;; keep this list sorted
              )))
-  "To e.g. join '(defun <name>' to its argument list.")
+  "Two-word pattern for lines that should be joined to the next.
+For example '(defun <name>' usually appears on the same line as
+its parameter list.")
 
 (defconst elfmt-autojoin-3
   (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("^(declare-function")))
-  "To e.g. join '(declare-function <name> <file>' to its argument list.")
+  "Three-word pattern for lines that should be joined to the next.
+For example '(declare-function <name> <file>' usually appears on
+the same line as its stubbed-in parameter list.")
 
 ;;;###autoload
 (define-minor-mode elfmt-mode
@@ -265,7 +271,7 @@ comments, closing parentheses, and backslash abbreviations like
 
 (defun elfmt--can-format-p (pos)
   "Is the Elisp code at POS formatable?
-Code inside strings and comments can't be reformated.
+Code inside strings and comments can't be reformatted.
 This may modify the point due to calls to `syntax-ppss'."
   (let ((state (syntax-ppss pos)))
     (not (or (nth 3 state) (nth 4 state)))))
