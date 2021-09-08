@@ -140,7 +140,8 @@ Interactive version of `elfmt-buffer' that reports timing."
 (defun elfmt--string (string)
   "Format the given STRING."
   (declare (side-effect-free t))
-  (when string
+  (if (not string)
+      (user-error "`elfmt' encountered an invalid expression")
     (with-temp-buffer
       (insert string)
       (delay-mode-hooks
