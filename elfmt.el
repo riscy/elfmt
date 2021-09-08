@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(eval-when-compile (require' rx))
 
 (defgroup elfmt nil
   "Code formatter for Elisp"
@@ -36,65 +37,52 @@
   :link '(url-link :tag "URL" "https://github.com/riscy/elfmt")
   :link '(emacs-commentary-link :tag "Commentary" "elfmt.el"))
 
-(defconst elfmt-autojoin-1
-  (regexp-opt
-   '( ; keep this list sorted
-     "(advice-add\n"
-     "(declare-function\n"
-     "(declare\n"
-     "(defcustom\n"
-     "(defun\n"
-     "(defvar\n"
-     "(dolist\n"
-     "(dotimes\n"
-     "(if-let*\n"
-     "(if-let\n"
-     "(if\n"
-     "(lambda\n"
-     "(let*\n"
-     "(let\n"
-     "(not\n"
-     "(pcase-let*\n"
-     "(pcase-let\n"
-     "(pcase\n"
-     "(unless\n"
-     "(when-let*\n"
-     "(when-let\n"
-     "(when\n"
-     "(while\n"
-     "(with-current-buffer\n"
-     "(with-suppressed-warnings\n"
-     ;; keep this list sorted
-     ))
-  "One-word pattern for lines that should be joined to the next.
-For example '(let' usually appears on the same line as the first
-variable it binds.")
-
-(defconst elfmt-autojoin-2
-  (format "%s [[:graph:]]+$"
-          (regexp-opt
-           '( ; keep this list sorted
-             "(cl-defgeneric"
-             "(cl-defmacro"
-             "(cl-defmethod"
-             "(cl-defsubst"
-             "(cl-defun"
-             "(defadvice"
-             "(defclass"
-             "(defmacro"
-             "(defsubst"
-             "(defun"
-             ;; keep this list sorted
-             )))
-  "Two-word pattern for lines that should be joined to the next.
-For example '(defun <name>' usually appears on the same line as
-its parameter list.")
-
-(defconst elfmt-autojoin-3
-  (format "%s [[:graph:]]+ [[:graph:]]+$" (regexp-opt '("^(declare-function")))
-  "Three-word pattern for lines that should be joined to the next.
-For example '(declare-function <name> <file>' usually appears on
-the same line as its stubbed-in parameter list.")
+(defconst elfmt-autojoin
+  (rx
+   (or
+    ;; One-word pattern for lines that should be joined to the next.  Example:
+    ;; '(let' usually appears on the same line as the first variable it binds.
+    "(advice-add\n"
+    "(declare-function\n"
+    "(declare\n"
+    "(defcustom\n"
+    "(defun\n"
+    "(defvar\n"
+    "(dolist\n"
+    "(dotimes\n"
+    "(if-let*\n"
+    "(if-let\n"
+    "(if\n"
+    "(lambda\n"
+    "(let*\n"
+    "(let\n"
+    "(not\n"
+    "(pcase-let*\n"
+    "(pcase-let\n"
+    "(pcase\n"
+    "(unless\n"
+    "(when-let*\n"
+    "(when-let\n"
+    "(when\n"
+    "(while\n"
+    "(with-current-buffer\n"
+    "(with-suppressed-warnings\n"
+    ;; Two-word patterns for lines that should be joined to the next.  Example:
+    ;; '(defun <name>' usually appears on the same line as its parameter list.
+    (regexp "(cl-defgeneric [[:graph:]]+$")
+    (regexp "(cl-defmacro [[:graph:]]+$")
+    (regexp "(cl-defmethod [[:graph:]]+$")
+    (regexp "(cl-defsubst [[:graph:]]+$")
+    (regexp "(cl-defun [[:graph:]]+$")
+    (regexp "(defadvice [[:graph:]]+$")
+    (regexp "(defclass [[:graph:]]+$")
+    (regexp "(defmacro [[:graph:]]+$")
+    (regexp "(defsubst [[:graph:]]+$")
+    (regexp "(defun [[:graph:]]+$")
+    ;; Three-word patterns:
+    (regexp "^(declare-function [[:graph:]]+ [[:graph:]]+$")))
+  "Postprocessing patterns used by `elfmt--postprocess-line'.
+When a line matches a regexp, join it with the next line.")
 
 ;;;###autoload
 (define-minor-mode elfmt-mode
@@ -287,9 +275,7 @@ join widowed lines with the next line, and fix indentation."
     (save-excursion (insert ";"))) ; start single-line comments with ;;
    ((or
      (ignore (elfmt--goto-innermost-sexp))
-     (looking-at elfmt-autojoin-1)
-     (looking-at elfmt-autojoin-2)
-     (looking-at elfmt-autojoin-3)
+     (looking-at elfmt-autojoin)
      (looking-at ":[[:graph:]]+\\_>$") ; :keywords e.g. for `plist-get'
      (elfmt--looking-at-orphan-parens))
     (elfmt--postprocess-join)))
