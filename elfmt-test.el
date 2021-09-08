@@ -82,6 +82,8 @@ last.  FORMS are the expressions to be threaded."
 
 (defun thing-at-point--beginning-of-sexp ()
   "Move point to the beginning of the current sexp."
+  ;; The line below is deliberately left blank:
+
   (let ((char-syntax (char-syntax (char-before))))
     (if (or
          (eq char-syntax ?\()
@@ -172,6 +174,7 @@ Or just a single column:
 (defun elfmt-symbol-test ()
   "An apparent keyword at the end of a string is left alone.
 :test"
+
   (list 1 2 3))
 
 (defun elfmt-test-spacing ()

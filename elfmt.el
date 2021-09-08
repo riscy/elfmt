@@ -220,10 +220,10 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
 
 (defun elfmt--mend-line ()
   "Join the current line up with the lines beneath it, when feasible."
-  ;; precond: (bolp)
-  (funcall indent-line-function)
-  (elfmt--goto-innermost-sexp)
-  (while (elfmt--mend-line-p) (save-excursion (elfmt--join-line))))
+  (unless (and (bolp) (eolp))
+    (funcall indent-line-function)
+    (elfmt--goto-innermost-sexp)
+    (while (elfmt--mend-line-p) (save-excursion (elfmt--join-line)))))
 
 (defun elfmt--goto-innermost-sexp ()
   "Move the point to the innermost sexp on the current line."
@@ -282,7 +282,8 @@ join widowed lines with the next line, and fix indentation."
     (elfmt--postprocess-join)))
   (when (eq (char-before (point-at-eol)) ?\()
     (elfmt--postprocess-join))
-  (funcall indent-line-function))
+  (unless (and (bolp) (eolp))
+    (funcall indent-line-function)))
 
 (defun elfmt--postprocess-join ()
   "Join the current line with the next."
