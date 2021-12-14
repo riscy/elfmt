@@ -112,15 +112,21 @@ Interactive version of `elfmt-buffer' that reports timing."
   "Format the current buffer."
   (barf-if-buffer-read-only)
   (let* ((gc-cons-threshold most-positive-fixnum)
+         (original-point (point))
+         (original-line
+          (count-lines original-point
+                       (save-excursion (move-to-window-line 0) (point))))
          (unformatted (buffer-substring (point-min) (point-max)))
          (formatted (elfmt--string unformatted)))
     ;; TODO: fix whitespace between top-level sexps
     (unless (string= unformatted formatted)
-      (let ((point (point)))
-        (erase-buffer)
-        (insert formatted)
-        (goto-char point)
-        (recenter)))))
+      ;; `replace-buffer-contents' looks appealing but is too slow:
+      (erase-buffer)
+      (insert formatted)
+      (goto-char original-point)
+      (recenter original-line)
+      (back-to-indentation)
+      (recenter))))
 
 (defun elfmt-sexp ()
   "Format the current (top level) sexp."
