@@ -156,7 +156,7 @@ Interactive version of `elfmt-buffer' that reports timing."
   ;; precond: point is on an sexp
   (let ((original-sexp (sexp-at-point)))
     (when (and original-sexp (listp original-sexp))
-      (goto-char (point-at-bol))
+      (beginning-of-line)
       (elfmt--map-sexp-lines #'elfmt--break-line)
       (elfmt--map-sexp-lines #'elfmt--mend-line)
       (elfmt--map-sexp-lines #'elfmt--postprocess-line)
@@ -216,7 +216,7 @@ This step behaves a lot like Emacs's builtin `pp-buffer'."
    (re-search-forward "[[:space:]]+$" (point-at-eol) t)
    (not (nth 3 (syntax-ppss)))
    (replace-match ""))
-  (goto-char (point-at-eol)))
+  (end-of-line))
 
 (defun elfmt--mend-line ()
   "Join the current line up with the lines beneath it, when feasible."
@@ -269,7 +269,7 @@ This may modify the point due to calls to `syntax-ppss'."
   "Run postprocessors on the line at point.
 Postprocessors will do things like fix single-line comments,
 join widowed lines with the next line, and fix indentation."
-  (goto-char (point-at-bol))
+  (beginning-of-line)
   (skip-chars-forward "[:space:]" (point-at-eol))
   (cond
    ((looking-at ";[^;]")
