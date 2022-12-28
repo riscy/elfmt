@@ -46,7 +46,7 @@ This is (yet another) code formatter for Emacs Lisp.
 
 *** Alternatives
 
-- [[https://gitlab.com/ideasman42/emacs-elisp-autofmt][elisp-autofmt]]
+- [[https://codeberg.org/ideasman42/emacs-elisp-autofmt][elisp-autofmt]]
 - [[https://github.com/Yuki-Inoue/elisp-format][elisp-format]]
 - [[https://github.com/Malabarba/aggressive-indent-mode][aggressive-indent-mode]]
 - [[https://github.com/abo-abo/lispy][lispy]]'s ~lispy-alt-multiline~
