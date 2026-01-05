@@ -1,6 +1,6 @@
 ;;; elfmt.el --- Code formatter for Elisp -*- lexical-binding: t -*-
 
-;; Author: <https://github.com/riscy/shx-for-emacs/graphs/contributors>
+;; Author: <https://github.com/riscy/elfmt/graphs/contributors>
 ;; Maintainer: Chris Rayner <dchrisrayner@gmail.com>
 ;; Created: Sep 5 2020
 ;; Keywords: lisp
