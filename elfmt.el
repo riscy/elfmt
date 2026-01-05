@@ -1,6 +1,7 @@
 ;;; elfmt.el --- Code formatter for Elisp -*- lexical-binding: t -*-
 
-;; Authors: Chris Rayner (dchrisrayner@gmail.com)
+;; Author: <https://github.com/riscy/shx-for-emacs/graphs/contributors>
+;; Maintainer: Chris Rayner <dchrisrayner@gmail.com>
 ;; Created: Sep 5 2020
 ;; Keywords: lisp
 ;; URL: https://github.com/riscy/elfmt
