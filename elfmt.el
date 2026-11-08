@@ -140,9 +140,17 @@ Interactive version of `elfmt-buffer' that reports timing."
       (beginning-of-defun)
       (let* ((unformatted (thing-at-point 'sexp))
              (formatted (elfmt--string unformatted)))
-        (unless (string= unformatted formatted) (kill-sexp) (insert formatted))))
+        (unless (string= unformatted formatted)
+          (elfmt--delete-sexp)
+          (insert formatted))))
     (message "`elfmt-sexp' took %dms"
              (* 1000 (float-time (time-since start-time))))))
+
+(defun elfmt--delete-sexp ()
+  "Alternative to kill-sexp that doesn't write to the kill-ring."
+  (let ((start-of-sexp (point)))
+    (forward-sexp 1)
+    (delete-region start-of-sexp (point))))
 
 (defun elfmt--string (string)
   "Format the given STRING."
