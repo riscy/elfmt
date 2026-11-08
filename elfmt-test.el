@@ -138,6 +138,11 @@ are non-nil, then the result is non-nil."
              ,@(or body `(,res))))
       `(let* () ,@(or body '(t))))))
 
+;; `declare-function' with two arguments:
+(declare-function magit-current-section "magit-section")
+(declare-function magit-toplevel "magit-git")
+(declare-function markdown-mode "markdown-mode")
+
 (defun test-tricky-comment (filename)
   "Show scatter plot of FILENAME.
 \nFor example, \":plotscatter file.dat\", where file.dat contains:

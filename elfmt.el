@@ -81,7 +81,7 @@
     (regexp "(defsubst [[:graph:]]+$")
     (regexp "(defun [[:graph:]]+$")
     ;; Three-word patterns:
-    (regexp "^(declare-function [[:graph:]]+ [[:graph:]]+$")))
+    (regexp "^(declare-function [[:graph:]]+ [[:graph:]]*[^)[:space:]\n]$")))
   "Postprocessing patterns used by `elfmt--postprocess-line'.
 When a line matches a regexp, join it with the next line.")
 
